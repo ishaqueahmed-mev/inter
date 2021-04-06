@@ -24,6 +24,7 @@ exports.getUsers = (req, res) => {
         .populate('hobbies')
         .populate('type')
         .exec((err, result) => {
+            console.log(result)
             if (err) throw err;
             else res.send(result)
         })

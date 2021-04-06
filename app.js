@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,6 +16,9 @@ mongoose.connect('mongodb://localhost:27017/testDemo').then(res => console.log('
   .catch(err => console.log('Error in connection ', err))
 
 var app = express();
+
+app.use(cors())
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
