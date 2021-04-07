@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -12,7 +14,8 @@ var typeRouter = require('./routes/type');
 var seeder = require('./controllers/seeder.controller')
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/testDemo').then(res => console.log('Connection success'))
+console.log(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI).then(res => console.log('Connection success'))
   .catch(err => console.log('Error in connection ', err))
 
 var app = express();
@@ -29,7 +32,7 @@ app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(seeder.addData)
+seeder.addData()
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

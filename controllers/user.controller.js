@@ -8,14 +8,16 @@ const filepath = 'public/uploads/';
 
 exports.create = (req, res) => {
     const file = req.file;
-    req.body.profile = req.file.filename
-    var user = new User(req.body);
+    req.body.profile = file ? file.filename : null;
+    let data = req.body;
+    if (data.hobbies && data.hobbies == '') data.hobbies = [];
+    var user = new User(data);
     user.save((err, result) => {
         if (err) {
-            fs.unlink(path.join(req.file.path))
+            if (file) fs.unlink(path.join(req.file.path))
             res.send(err)
         }
-        else res.send('Successfully added user')
+        else res.status(200).send({ 'message': 'Successfully added user' })
     })
 }
 
@@ -26,7 +28,10 @@ exports.getUsers = (req, res) => {
         .exec((err, result) => {
             console.log(result)
             if (err) throw err;
-            else res.send(result)
+            else {
+                if (result) res.send(result)
+                else res.send([])
+            }
         })
 }
 
@@ -49,9 +54,9 @@ exports.deleteUser = (req, res) => {
             if (result) {
                 const file = result.profile;
                 fs.unlink(path.join(filepath + file));
-                res.send('Sucessfully deleted')
+                res.send({ 'message': 'Successfuly deleted' })
             } else {
-                res.send('Does not exists')
+                res.send({ 'message': 'Does not exists' })
             }
         }
     })
@@ -60,7 +65,7 @@ exports.deleteUser = (req, res) => {
 exports.updateUser = (req, res) => {
     let id = req.params.id;
     let profile = req.file.filename
-    let data = {...req.body, profile};
+    let data = { ...req.body, profile };
     User.findByIdAndUpdate({ _id: id }, data, (err, result) => {
         if (err) throw err;
         else {
@@ -69,7 +74,7 @@ exports.updateUser = (req, res) => {
                 fs.unlink(path.join(filepath + file));
                 res.send(result)
             } else {
-                res.send('Does not exists')
+                res.send({ 'message': 'Does not exists' })
             }
         }
     })
