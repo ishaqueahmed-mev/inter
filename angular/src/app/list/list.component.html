@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th scope="col">#</th>
+            <th scope="col"></th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
         </tr>
@@ -10,9 +11,15 @@
         <tr *ngFor="let user of userData; index as i">
             <th scope="row">{{ i + 1 }}</th>
             <td>
+                <img [src]="env.imageUrl + user.profile" class="profile" (error)="setProfileImage($event)">
+            </td>
+            <td>
                 {{ user.firstName + user.lastName }}
             </td>
             <td>{{ user.email }}</td>
+            <td>
+                {{ user.dob | amDateFormat: 'DD-MM-YYYY'}}
+            </td>
         </tr>
     </tbody>
 </table>

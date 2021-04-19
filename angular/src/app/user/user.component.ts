@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from "../user.service";
 import { Router } from "@angular/router";
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 
 @Component({
@@ -18,7 +19,9 @@ export class UserComponent implements OnInit {
   hobbyData = []
   typeData = [];
   selectedHobbies = []
-  formData = new FormData()
+  formData = new FormData();
+  picker: any;
+  datePicker: any
 
   constructor(
     private formBuilder: FormBuilder,
@@ -71,18 +74,23 @@ export class UserComponent implements OnInit {
     this.f.type.patchValue(e.target.value)
   }
 
+  addEvent(event: MatDatepickerInputEvent<Date>) {
+    // console.log(`${event.value}`);
+    this.datePicker = new Date(event.value).getTime()
+  }
+
   onSubmit() {
     this.submitted = true;
-    console.log(this.userForm.value)
+    console.log(this.userForm.value, this.picker)
     // stop here if form is invalid
     if (this.userForm.invalid) {
       return;
     }
     let dataObj = this.userForm.value;
+    // dataObj['dob'] = this.datePicker;
     for (const key in dataObj) {
       if (Object.prototype.hasOwnProperty.call(dataObj, key)) {
         const element = dataObj[key];
-        console.log(key, ' ', element)
         if (key == 'hobbies') {
           this.formData.append('hobbies[]', dataObj['hobbies'])
         } else {
