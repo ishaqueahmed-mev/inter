@@ -1,25 +1,34 @@
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col"></th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let user of userData; index as i">
-            <th scope="row">{{ i + 1 }}</th>
-            <td>
-                <img [src]="env.imageUrl + user.profile" class="profile" (error)="setProfileImage($event)">
-            </td>
-            <td>
-                {{ user.firstName + user.lastName }}
-            </td>
-            <td>{{ user.email }}</td>
-            <td>
-                {{ user.dob | amDateFormat: 'DD-MM-YYYY'}}
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary" type="button" routerLink="user">Add user</button>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of userData; index as i">
+                        <th scope="row">{{ i + 1 }}</th>
+                        <td>
+                            <img [src]="env.imageUrl + user.profile" class="profile" (error)="setProfileImage($event)">
+                        </td>
+                        <td>
+                            {{ user.firstName + user.lastName }}
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {{ user.dob | amDateFormat: 'DD-MM-YYYY'}}
+                        </td>
+                        <td><a class="action" (click)="edit(user._id)"> Edit</a></td>
+                        <td><a class="action" (click)="delete(user._id)"> Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

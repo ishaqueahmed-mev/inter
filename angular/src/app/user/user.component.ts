@@ -21,7 +21,8 @@ export class UserComponent implements OnInit {
   selectedHobbies = []
   formData = new FormData();
   picker: any;
-  datePicker: any
+  datePicker: any;
+  maxDate = new Date()
 
   constructor(
     private formBuilder: FormBuilder,
@@ -92,6 +93,9 @@ export class UserComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(dataObj, key)) {
         const element = dataObj[key];
         if (key == 'hobbies') {
+          // for(var i=0;i< dataObj['hobbies'].length;i++){
+          //   this.formData.append('hobbies[]', dataObj['hobbies'][i])
+          // }
           this.formData.append('hobbies[]', dataObj['hobbies'])
         } else {
           this.formData.append(key, element)

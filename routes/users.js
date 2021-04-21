@@ -23,7 +23,8 @@ var upload = multer({ storage: storage })
 
 router.post('/', upload.single('profile'), userCtrl.create)
   .get('/', userCtrl.getUsers)
-  .get('/:id', userCtrl.getUserById)
+  .get('/get-user-by-id/:id', userCtrl.getUserById)
+  .get('/search', userCtrl.searchUser)
   .delete('/:id', userCtrl.deleteUser)
   .put('/:id', upload.single('profile'), userCtrl.updateUser)
 
