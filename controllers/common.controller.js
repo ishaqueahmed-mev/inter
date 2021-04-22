@@ -12,9 +12,9 @@ async function createData(model) {
     }
 }
 
-async function getData(model, query, pop = null, sort) {
+async function getData(model, query, pop = null, sort, skip = 0, limit = 0) {
     try {
-        let data = await model.find(query).populate(pop).sort(sort).exec();
+        let data = await model.find(query).populate(pop).sort(sort).skip(skip).limit(limit).exec();
         return data;
     } catch (err) {
         throw err

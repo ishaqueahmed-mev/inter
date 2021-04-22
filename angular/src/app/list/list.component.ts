@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from "../user.service";
 import { environment } from "../../environments/environment";
+import { Observable, Subject } from 'rxjs';
+import {
+  debounceTime, distinctUntilChanged, switchMap
+} from 'rxjs/operators';
+import * as moment from "moment";
+
 
 
 @Component({
@@ -13,9 +19,12 @@ export class ListComponent implements OnInit {
 
   users$: any;
   userData = [];
-  env = environment;
-  tooltips = [];
-  colors = ['red', 'green', 'orange'];
+  userLength;
+  pageCounts = [];
+  dataLimit = 10;
+  currentPage: number = 1;
+  extraParams = {};
+  searchChanged = new Subject<string>();
 
   constructor(
     private userService: UserService
@@ -23,61 +32,75 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsers();
-    // this.JustROCThings()
+
+    // When search is done, value is typed in input box, and searchChanged variable
+    // is changed from search method, so again subscribed.
+    this.searchChanged.pipe(
+      debounceTime(300),
+      distinctUntilChanged())
+      .subscribe(s => {
+        this.extraParams['search'] = s;
+        this.getUsers()
+      });
   }
 
   getUsers() {
-    this.users$ = this.userService.getUser().subscribe((res: any) => {
+    let userObj = {
+      'startLimit': (this.currentPage - 1) * this.dataLimit,
+      'endLimit': this.dataLimit,
+      ...this.extraParams
+    };
+    console.log(userObj)
+    this.users$ = this.userService.getUser(userObj).subscribe((res: any) => {
+      this.pageCounts = [];
       console.log('Data :: ', res)
       this.userData = [...res.data];
-
+      this.userLength = res.length;
+      this.filterData();
+      this.setPagination();
     }, err => {
       console.log('Error :: ', err)
     })
+  }
+
+  filterData() {
+    this.userData.map(x => {
+      x.profile = x.profile ? `${environment.imageUrl}${x.profile}` : 'assets/images/noimage.jpeg';
+    })
+  }
+
+  setPagination() {
+    let length = (this.userLength / this.dataLimit) + 1;
+    for (let i = 0; i < length - 1; i++) this.pageCounts.push(i + 1);
+  }
+
+  switchPage(arg?) {
+    this.currentPage = +arg;
+    this.getUsers();
   }
 
   setProfileImage(evt) {
     evt.target.src = "assets/images/noimage.jpeg";
   }
 
+  edit(id) {
+
+  }
+
   delete(id) {
     let confirm = window.confirm('Are you sure to delete the user?');
     if (!confirm) return;
     this.userService.deleteUser(id).subscribe(result => {
-      console.log('User deleted successfully', result)
-      let delIndex = this.userData.findIndex(u => u._id == id);
-      if (delIndex != -1) this.userData.splice(delIndex, 1);
+      this.getUsers(); // To update list
+
+      // Workout without pagination
+      // let delIndex = this.userData.findIndex(u => u._id == id);
+      // if (delIndex != -1) this.userData.splice(delIndex, 1);
     }, err => console.log(err))
   }
 
-  JustROCThings() {
-    this.tooltips = [
-      {
-        "drink": ["swallow", "assist", "encourage"]
-      }, {
-        "eat": ["swallow", "assist", "encourage"]
-      }, {
-        "holistic": ["hearing", "vision", "speech", "recognition"]
-      }
-    ]
-
-    let newArr = [];
-    for (let i = 0; i < this.tooltips.length; i++) {
-      let obj = this.tooltips[i];
-      for (const key in obj) {
-        const element = obj[key];
-        console.log(obj, ' ', obj[key]);
-        obj[key].map(o => {
-          this.colors.map(c => {
-            newArr.push({
-              'name': `ROC to ${key} ${o} ${c}`,
-              'value': `${key}_${o}_${c}`
-            })
-          })
-        })
-      }
-    }
-    console.log('FINAL :: ', newArr)
+  search(term: string) {
+    this.searchChanged.next(term);
   }
 
   ngOnDestroy(): void {

@@ -24,9 +24,26 @@ exports.create = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        let data = await getData(User, {}, 'hobbies type', { 'created': -1 });
+        let skip, limit, search, query = {};
+        let rQuery = req.query;
+        if(rQuery) {
+            skip = +rQuery.startLimit;
+            limit = +rQuery.endLimit;
+            search = rQuery.search
+        }
+        if (search) {
+            query = {
+                $or: [
+                    { email: { $regex: search, $options: 'i' } },
+                    { lastName: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
+                ]
+            };
+        }
+
+        let data = await getData(User, query, 'hobbies type', { 'created': -1 }, skip, limit);
         if (data && data.length) {
-            let count = await getDataLength(User, {});
+            let count = await getDataLength(User, query);
             res.status(200).send({ data: data, length: count })
         }
         else res.send({ data: [], length: 0 })
@@ -76,30 +93,6 @@ exports.updateUser = async (req, res) => {
             res.send(result)
         } else {
             res.send({ 'message': 'Does not exists' })
-        }
-    } catch (err) {
-        res.status(500).send(err)
-    }
-}
-
-exports.searchUser = async (req, res) => {
-    try {
-        let search = req.query.search;
-        let query = {
-            $or: [
-                { email: { $regex: search, $options: 'i' } },
-                { lastName: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } }
-            ]
-        };
-
-        let result = await getData(User, query, 'hobbies type');
-        if (result && result.length > 0) {
-            let count = await getDataLength(User, query);
-            res.status(200).send({ data: result, length: count })
-        }
-        else {
-            res.status(200).send({ data: [], length: 0 })
         }
     } catch (err) {
         res.status(500).send(err)

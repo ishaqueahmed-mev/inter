@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +17,11 @@ export class UserService {
     return this.http.post(`${this.baseUrl}/users`, data);
   }
 
-  getUser() {
-    return this.http.get(`${this.baseUrl}/users`);
+  getUser(userObj) {
+    return this.http.get(`${this.baseUrl}/users`, {params: userObj}).pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    );
   }
 
   getUserById(id) {

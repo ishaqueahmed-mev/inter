@@ -2,6 +2,10 @@
     <div class="row">
         <div class="col-md-12">
             <button class="btn btn-primary" type="button" routerLink="user">Add user</button>
+            <div id="search-component">
+                <label for="search-box">User Search</label>
+                <input #searchBox id="search-box" (input)="search(searchBox.value)" />
+            </div>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -9,13 +13,15 @@
                         <th scope="col"></th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let user of userData; index as i">
-                        <th scope="row">{{ i + 1 }}</th>
+                        <th scope="row">{{ (i + 1) + ((currentPage - 1) * dataLimit)}}</th>
                         <td>
-                            <img [src]="env.imageUrl + user.profile" class="profile" (error)="setProfileImage($event)">
+                            <img [src]="user.profile" class="profile" (error)="setProfileImage($event)">
                         </td>
                         <td>
                             {{ user.firstName + user.lastName }}
@@ -24,11 +30,32 @@
                         <td>
                             {{ user.dob | amDateFormat: 'DD-MM-YYYY'}}
                         </td>
-                        <td><a class="action" (click)="edit(user._id)"> Edit</a></td>
-                        <td><a class="action" (click)="delete(user._id)"> Delete</a></td>
+                        <td>
+                            <a class="action" (click)="edit(user._id)"> Edit</a><br>
+                            <a class="action" (click)="delete(user._id)"> Delete</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="pagination" *ngIf="pageCounts?.length > 0">
+            <!-- <li style="cursor: pointer; margin-top: 9px;" [ngClass]="{'disabled-arr': currentPage == 1}">
+                <a class="pagination-arrow" (click)="changePage('prev')">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li> -->
+            <li *ngFor="let length of pageCounts; let i = index" style="cursor: pointer;">
+                <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}"
+                    (click)="switchPage(i+1)">{{i + 1}}</a>
+                <!-- <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}" *ngIf="i < pageCounts.length - 1" (click)="switchPage(i+1)">{{i + 1}}</a>
+                <a class="pagination-number" *ngIf="i == pageCounts.length - 1 && currentPage != (i + 1)" (click)="switchPage(i+1)">Last</a>
+                <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}" *ngIf="i == pageCounts.length - 1 && currentPage == (i + 1)">{{pageCounts.length}}</a> -->
+            </li>
+            <!-- <li style="cursor: pointer; margin-top: 9px;" [ngClass]="{'disabled-arr': currentPage == pageCounts.length}">
+                <a class="pagination-arrow" (click)="switchPage(pageCounts.length)">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li> -->
         </div>
     </div>
 </div>
