@@ -41,7 +41,7 @@ async function deleteData(model, query) {
 
 async function updateData(model, data, query) {
     try {
-        let result = await model.findByIdAndUpdate(query);
+        let result = await model.findByIdAndUpdate(query, data);
         return result;
     } catch (err) {
         throw err

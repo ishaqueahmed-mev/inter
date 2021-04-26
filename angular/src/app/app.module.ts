@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 
+import { SharedModule } from "./common/common.module";
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UserComponent } from './user/user.component';
@@ -42,7 +44,8 @@ import { MomentModule } from 'ngx-moment';
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
-    MomentModule
+    MomentModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]

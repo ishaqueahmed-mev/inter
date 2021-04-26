@@ -1,0 +1,19 @@
+<div class="pagination" *ngIf="pageCounts?.length > 0">
+    <!-- <li style="cursor: pointer; margin-top: 9px;" [ngClass]="{'disabled-arr': currentPage == 1}">
+        <a class="pagination-arrow" (click)="changePage('prev')">
+            <i class="fas fa-angle-left"></i>
+        </a>
+    </li> -->
+    <li *ngFor="let length of pageCounts; let i = index" style="cursor: pointer;">
+        <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}"
+            (click)="switchPage(i+1)">{{i + 1}}</a>
+        <!-- <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}" *ngIf="i < pageCounts.length - 1" (click)="switchPage(i+1)">{{i + 1}}</a>
+        <a class="pagination-number" *ngIf="i == pageCounts.length - 1 && currentPage != (i + 1)" (click)="switchPage(i+1)">Last</a>
+        <a class="pagination-number" [ngClass]="{'active disabled': currentPage == (i + 1)}" *ngIf="i == pageCounts.length - 1 && currentPage == (i + 1)">{{pageCounts.length}}</a> -->
+    </li>
+    <!-- <li style="cursor: pointer; margin-top: 9px;" [ngClass]="{'disabled-arr': currentPage == pageCounts.length}">
+        <a class="pagination-arrow" (click)="switchPage(pageCounts.length)">
+            <i class="fas fa-angle-right"></i>
+        </a>
+    </li> -->
+</div>

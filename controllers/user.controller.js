@@ -26,7 +26,7 @@ exports.getUsers = async (req, res) => {
     try {
         let skip, limit, search, query = {};
         let rQuery = req.query;
-        if(rQuery) {
+        if (rQuery) {
             skip = +rQuery.startLimit;
             limit = +rQuery.endLimit;
             search = rQuery.search
@@ -83,14 +83,17 @@ exports.deleteUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         let id = req.params.id;
-        let profile = req.file && req.file.filename
-        let data = { ...req.body, profile };
+        let profile = req.file && req.file.filename;
+        let data = { ...req.body };
+        if (profile) data['profile'] = profile;
         let query = { _id: id };
         let result = await updateData(User, data, query);
         if (result) {
-            const file = result.profile;
-            unlinkFiles(path.join(filepath + file));
-            res.send(result)
+            if (profile) {
+                const file = result.profile;
+                if (file) unlinkFiles(path.join(filepath + file));
+            }
+            res.send({ 'message': 'User updated successfully' })
         } else {
             res.send({ 'message': 'Does not exists' })
         }

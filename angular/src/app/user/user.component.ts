@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from "../user.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 
@@ -22,33 +22,54 @@ export class UserComponent implements OnInit {
   formData = new FormData();
   picker: any;
   datePicker: any;
-  maxDate = new Date()
+  maxDate = new Date();
+  editId: any;
+  editData: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.route.params.subscribe(p => {
+      if (p && p.id) this.editId = p.id;
+    })
+  }
 
   ngOnInit(): void {
-    this.userForm = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      profile: [''],
-      hobbies: [[]],
-      type: ['', [Validators.required]],
-      dob: ['']
-    });
+    // if ()
+    if (this.editId) {
+      this.userService.getUserById(this.editId).subscribe((res: any) => {
+        if (res && res.data) this.editData = res.data;
+        this.initForm(this.editData);
+      }, err => {
+        console.log(err)
+      })
+    } else {
+      this.initForm();
+    }
 
     this.getHobbies()
     this.getTypes()
   }
 
+  initForm(data?) {
+    console.log(data)
+    this.userForm = this.formBuilder.group({
+      firstName: [data?.firstName, Validators.required],
+      lastName: [data?.lastName, Validators.required],
+      email: [data?.email, [Validators.required, Validators.email]],
+      profile: [data?.profile],
+      hobbies: [data?.hobbies?.map(h => h._id)],
+      type: [data?.type?._id, [Validators.required]],
+      dob: [data?.dob]
+    });
+  }
+
   getHobbies() {
     this.hobbies$ = this.userService.getHobby().subscribe((res: any) => {
-      if (res && res.length > 0) this.hobbyData = [...res]
-      console.log('Data :: ', this.hobbyData)
+      if (res && res.data) this.hobbyData = [...res.data]
     }, err => {
       console.log('Error :: ', err)
     })
@@ -56,8 +77,7 @@ export class UserComponent implements OnInit {
 
   getTypes() {
     this.types$ = this.userService.getType().subscribe((res: any) => {
-      if (res && res.length > 0) this.typeData = [...res]
-      console.log('Data :: ', this.typeData)
+      if (res && res.data) this.typeData = [...res.data]
     }, err => {
       console.log('Error :: ', err)
     })
@@ -67,45 +87,36 @@ export class UserComponent implements OnInit {
 
   onFileSelect(e) {
     let file = e.target.files[0]
-    console.log('File :: ', file)
     this.formData.append('profile', file)
   }
 
-  getType(e) {
-    this.f.type.patchValue(e.target.value)
-  }
-
-  addEvent(event: MatDatepickerInputEvent<Date>) {
-    // console.log(`${event.value}`);
-    this.datePicker = new Date(event.value).getTime()
-  }
-
   onSubmit() {
+    // console.log('SUBD :: ', this.userForm)
     this.submitted = true;
-    console.log(this.userForm.value, this.picker)
-    // stop here if form is invalid
     if (this.userForm.invalid) {
       return;
     }
     let dataObj = this.userForm.value;
-    // dataObj['dob'] = this.datePicker;
     for (const key in dataObj) {
       if (Object.prototype.hasOwnProperty.call(dataObj, key)) {
         const element = dataObj[key];
         if (key == 'hobbies') {
-          for(var i=0;i< dataObj['hobbies'].length;i++){
+          for (var i = 0; i < dataObj['hobbies'].length; i++) {
             this.formData.append('hobbies[]', dataObj['hobbies'][i])
           }
-          // this.formData.append('hobbies[]', dataObj['hobbies'])
-        } else {
-          this.formData.append(key, element)
         }
-
+        else this.formData.append(key, element)
       }
     }
-    this.userService.addUser(this.formData).subscribe(res => {
-      console.log('RES ', res)
-      alert('Success')
+
+    let addData;
+    if (this.editId) {
+      addData = this.userService.updateUser(this.formData, this.editId);
+    } else {
+      addData = this.userService.addUser(this.formData);
+    }
+    addData.subscribe(res => {
+      alert(res['message'])
       this.submitted = false;
       this.userForm.reset()
       this.router.navigate(['list'])
@@ -113,6 +124,7 @@ export class UserComponent implements OnInit {
       console.log(err)
     })
   }
+
 
   ngOnDestroy(): void {
     if (this.types$) this.types$.unsubscribe()

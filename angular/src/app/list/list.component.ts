@@ -5,9 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import {
   debounceTime, distinctUntilChanged, switchMap
 } from 'rxjs/operators';
-import * as moment from "moment";
-
-
+// import * as moment from "moment";
 
 @Component({
   selector: 'app-list',
@@ -15,7 +13,6 @@ import * as moment from "moment";
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-
 
   users$: any;
   userData = [];
@@ -99,7 +96,7 @@ export class ListComponent implements OnInit {
     }, err => console.log(err))
   }
 
-  search(term: string) {
+  search(term) {
     this.searchChanged.next(term);
   }
 

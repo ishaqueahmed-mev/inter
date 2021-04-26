@@ -25,14 +25,14 @@ export class UserService {
   }
 
   getUserById(id) {
-    return this.http.get(`${this.baseUrl}/users/${id}`);
+    return this.http.get(`${this.baseUrl}/users/get-user-by-id/${id}`);
   }
 
   deleteUser(id) {
     return this.http.delete(`${this.baseUrl}/users/${id}`);
   }
 
-  updateUser(id, data) {
+  updateUser(data, id) {
     return this.http.put(`${this.baseUrl}/users/${id}`, data);
   }
 
