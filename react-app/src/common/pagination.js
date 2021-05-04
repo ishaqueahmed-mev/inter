@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import "../User/user.css";
+import "../classUser/user.css";
 
 export class Pagination extends Component {
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     switchPage(e) {
         // Value of `e` get passed to switchPage in list component, just like emitting in Ng
@@ -20,8 +20,8 @@ export class Pagination extends Component {
                 <ul>{
                     this.props.pageCounts.map((p, i) => (
                         <li key={p.toString()}>
-                            <a className={`pagination-number ${this.props.currentPage == (i + 1) ? 'active disabled' : ''}`}
-                                onClick={this.switchPage.bind(this, i + 1)}>{p}</a>
+                            <button className={`pagination-number ${this.props.currentPage === (i + 1) ? 'active disabled' : ''}`}
+                                onClick={this.switchPage.bind(this, i + 1)}>{p}</button>
                         </li>
                     ))
                 }
@@ -30,26 +30,3 @@ export class Pagination extends Component {
         )
     }
 }
-
-// const Pagination = (props) => {
-//     console.log('PAGE :: ', props)
-//     let switchPage = (e) => {
-//         props.pageChange(e);
-//     }
-
-//     return (
-//         <div className="pagination">
-//             <ul>{
-//                 props.pageCounts.map((p, i) => (
-//                     <li key={p.toString()}>
-//                         <a className={`pagination-number ${props.currentPage == (i + 1) ? 'active disabled' : ''}`}
-//                             onClick={switchPage.bind(this, i + 1)}>{p}</a>
-//                     </li>
-//                 ))
-//             }
-//             </ul>
-//         </div >
-//     )
-// };
-
-// export default Pagination;

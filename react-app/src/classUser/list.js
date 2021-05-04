@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import "./user.css";
+import { Link, Redirect } from "react-router-dom";
+import "../classUser/user.css";
 import { Pagination } from "../common/pagination";
 import Search from "../common/search";
 
-export class FunctionalList extends Component {
+export class ClassList extends Component {
     dataLimit = 10;
     extraParams = {};
 
@@ -72,7 +72,24 @@ export class FunctionalList extends Component {
     }
 
     delete(id) {
+        let confirm = window.confirm('Are you sure to delete the user?');
+        if (!confirm) return;
+        axios.delete(`http://localhost:3000/users/${id}`).then(result => {
+            this.getUsers(); // To update list
+
+            // Workout without pagination
+            // let delIndex = this.userData.findIndex(u => u._id == id);
+            // if (delIndex != -1) this.userData.splice(delIndex, 1);
+        }).catch(err => console.log(err))
+    }
+
+    edit(id) {
         console.log(id)
+        return (
+            <Redirect
+                to={`/user/${id}`}
+            />
+        )
     }
 
     switchPage(arg) {
@@ -90,34 +107,36 @@ export class FunctionalList extends Component {
 
     render() {
         let userData = [...this.state.userData];
-        let rows = userData.map((user, i) => {
-            return (
-                <tr key={user._id}>
-                    <th scope="row">{(i + 1) + ((this.state.currentPage - 1) * this.dataLimit)}</th>
-                    <td>
-                        <img alt={user.firstName} src={user.profile} className="profile" onError={this.setProfileImage} />
-                    </td>
-                    <td>
-                        {user.firstName + user.lastName}
-                    </td>
-                    <td>{user.email}</td>
-                    <td>
-                        {user.dob}
-                    </td>
-                    <td>
-                        <input type="button" className="action" value="Edit" />  <br />
-                        <input type="button" className="action" onClick={this.delete.bind(this, user._id)} value="Delete" />
-                    </td>
-                </tr >
-            )
-        })
+        let rows = userData.map((user, i) => (
+            <tr key={user._id}>
+                <th scope="row">{(i + 1) + ((this.state.currentPage - 1) * this.dataLimit)}</th>
+                <td>
+                    <img alt={user.firstName} src={user.profile} className="profile" onError={this.setProfileImage} />
+                </td>
+                <td>
+                    {user.firstName + user.lastName}
+                </td>
+                <td>{user.email}</td>
+                <td>
+                    {user.dob}
+                </td>
+                <td>
+                    {/* <input type="button" className="action" value="Edit" onClick={this.edit.bind(this, user._id)} />  <br /> */}
+                    <Link to={`/edit/${user._id}`}>
+                        <input type="button" className="action" value="Edit" />
+                    </Link>
+                    <input type="button" className="action" onClick={this.delete.bind(this, user._id)} value="Delete" />
+                </td>
+            </tr >
+
+        ))
 
         return (
             <div>
                 <h1>Users list with CC</h1>
                 <ul>
                     <li>
-                        <Link to="/user">Create user</Link>
+                        <Link to="/add">Create user</Link>
                     </li>
                 </ul>
                 <div className="container">

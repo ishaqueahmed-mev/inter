@@ -4,22 +4,26 @@ import {
     Switch,
     Route,
 } from "react-router-dom";
-import CreateUser from "./User/create";
-import { FunctionalList } from "./User/f-list";
-import List from "./User/list";
+import { CreateUser } from "./classUser/create";
+import { ClassList } from "./classUser/list";
+import FunctionalList from "./functionUser/f-list";
 
 const routes = [
     {
-        path: '/user',
+        path: '/add',
+        component: CreateUser
+    },
+    {
+        path: '/edit/:id',
         component: CreateUser
     },
     {
         path: '/flist',
-        component: List
+        component: FunctionalList
     },
     {
         path: '/list',
-        component: FunctionalList
+        component: ClassList
     },
     {
         path: '*',

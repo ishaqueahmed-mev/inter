@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 
-function List(props) {
+function FunctionalList(props) {
     return (
         <div>
             <h1>Users list with FC</h1>
             <ul>
                 <li>
-                    <Link to="/user">Create user</Link>
+                    <Link to="/add">Create user</Link>
 
                 </li>
             </ul>
@@ -14,4 +14,4 @@ function List(props) {
     )
 }
 
-export default List;
+export default FunctionalList;
