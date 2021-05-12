@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import "../classUser/user.css";
 
 export class Pagination extends Component {
-    // constructor(props) {
-    //     super(props);
-    // }
+    constructor(props) {
+        super(props);
+        console.log('THS ', this.props)
+    }
 
     switchPage(e) {
         // Value of `e` get passed to switchPage in list component, just like emitting in Ng

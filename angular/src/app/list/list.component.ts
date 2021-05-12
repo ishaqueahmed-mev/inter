@@ -37,6 +37,7 @@ export class ListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(s => {
         this.extraParams['search'] = s;
+        this.currentPage = 1; // So to avoid data limit issue on search
         this.getUsers()
       });
   }

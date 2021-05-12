@@ -26,7 +26,7 @@ export class ClassList extends Component {
     }
 
     getUsers() {
-        console.log('this.state.currentPage ', this.state.currentPage)
+        // console.log('this.state.currentPage ', this.state.currentPage)
         let userObj = {
             'startLimit': (this.state.currentPage - 1) * this.dataLimit,
             'endLimit': this.dataLimit,
@@ -102,7 +102,10 @@ export class ClassList extends Component {
         console.log(e.target.value)
         let s = e.target.value;
         this.extraParams['search'] = s;
-        this.getUsers();
+        this.getUsers(); // So to avoid data limit issue on search
+        this.setState({
+            currentPage: 1
+        })
     }
 
     render() {

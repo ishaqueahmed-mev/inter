@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "start-angular": "npm start & npm run angular",
+    "start-react": "npm start & npm run react",
+    "angular": "cd angular && ng serve --port 7575",
+    "react": "cd react-app && PORT=8080 react-scripts start"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
